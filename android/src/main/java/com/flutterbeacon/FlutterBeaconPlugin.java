@@ -109,6 +109,16 @@ public class FlutterBeaconPlugin implements FlutterPlugin, ActivityAware, Method
       beaconManager.getBeaconParsers().add(iBeaconLayout);
     }
 
+      // Detect the main identifier (UID) frame:
+      beaconManager.getBeaconParsers().add(new BeaconParser().
+              setBeaconLayout(BeaconParser.EDDYSTONE_UID_LAYOUT));
+      // Detect the telemetry (TLM) frame:
+      beaconManager.getBeaconParsers().add(new BeaconParser().
+              setBeaconLayout(BeaconParser.EDDYSTONE_TLM_LAYOUT));
+      // Detect the URL frame:
+      beaconManager.getBeaconParsers().add(new BeaconParser().
+              setBeaconLayout(BeaconParser.EDDYSTONE_URL_LAYOUT));
+
     platform = new FlutterPlatform(activity);
     beaconScanner = new FlutterBeaconScanner(this, activity);
     beaconBroadcast = new FlutterBeaconBroadcast(activity, iBeaconLayout);
