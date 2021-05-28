@@ -46,8 +46,8 @@ class _TabScanningState extends State<TabScanning> {
     }
     final regions = <Region>[
       Region(
-        identifier: 'Cubeacon',
-        proximityUUID: 'CB10023F-A318-3394-4199-A8730C7C1AEC',
+        identifier: 'BeaconX',
+        //proximityUUID: 'CB10023F-A318-3394-4199-A8730C7C1AEC',
       ),
     ];
 
@@ -60,7 +60,8 @@ class _TabScanningState extends State<TabScanning> {
 
     _streamRanging =
         flutterBeacon.ranging(regions).listen((RangingResult result) {
-      print(result);
+      print('RESULT = $result');
+      print('BEACONS = ${result.beacons}');
       if (result != null && mounted) {
         setState(() {
           _regionBeacons[result.region] = result.beacons;
@@ -111,34 +112,55 @@ class _TabScanningState extends State<TabScanning> {
           : ListView(
               children: ListTile.divideTiles(
                 context: context,
+                color: Colors.white,
                 tiles: _beacons.map(
                   (beacon) {
-                    return ListTile(
-                      title: Text(
-                        beacon.proximityUUID,
-                        style: TextStyle(fontSize: 15.0),
-                      ),
-                      subtitle: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          Flexible(
-                            child: Text(
-                              'Major: ${beacon.major}\nMinor: ${beacon.minor}',
-                              style: TextStyle(fontSize: 13.0),
-                            ),
-                            flex: 1,
-                            fit: FlexFit.tight,
+                    return Column(
+                      children: [
+                        Text(
+                          beacon.macAddress,
+                          style: TextStyle(fontSize: 15.0),
+                        ),
+                        ListTile(
+                          // leading: Text(
+                          //   beacon.macAddress,
+                          //   style: TextStyle(fontSize: 15.0),
+                          // ),
+                          title: Text(
+                            beacon.proximityUUID,
+                            style: TextStyle(fontSize: 15.0),
                           ),
-                          Flexible(
-                            child: Text(
-                              'Accuracy: ${beacon.accuracy}m\nRSSI: ${beacon.rssi}',
-                              style: TextStyle(fontSize: 13.0),
-                            ),
-                            flex: 2,
-                            fit: FlexFit.tight,
-                          )
-                        ],
-                      ),
+                          subtitle: new Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              Flexible(
+                                child: Text(
+                                  'Major: ${beacon.major}\nMinor: ${beacon.minor}',
+                                  style: TextStyle(fontSize: 13.0),
+                                ),
+                                flex: 1,
+                                fit: FlexFit.tight,
+                              ),
+                              Flexible(
+                                child: Text(
+                                  'Accuracy: ${beacon.accuracy}m\nRSSI: ${beacon.rssi}',
+                                  style: TextStyle(fontSize: 13.0),
+                                ),
+                                flex: 2,
+                                fit: FlexFit.tight,
+                              )
+                            ],
+                          ),
+                          // trailing: Text(beacon.proximity.toString(),
+                          //     style: TextStyle(fontSize: 15.0)),
+                        ),
+                        Text(
+                          'Tx Power: ${beacon.txPower}',
+                          style: TextStyle(fontSize: 13.0),
+                        ),
+                        Text('Proximity: ${beacon.proximity.toString()}',
+                            style: TextStyle(fontSize: 13.0)),
+                      ],
                     );
                   },
                 ),

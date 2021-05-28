@@ -3,6 +3,7 @@ package com.flutterbeacon;
 import android.util.Log;
 
 import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.MonitorNotifier;
 import org.altbeacon.beacon.Region;
@@ -15,114 +16,144 @@ import java.util.Locale;
 import java.util.Map;
 
 class FlutterBeaconUtils {
-  static String parseState(int state) {
-    return state == MonitorNotifier.INSIDE ? "INSIDE" : state == MonitorNotifier.OUTSIDE ? "OUTSIDE" : "UNKNOWN";
-  }
-
-  static List<Map<String, Object>> beaconsToArray(List<Beacon> beacons) {
-    if (beacons == null) {
-      return new ArrayList<>();
-    }
-    List<Map<String, Object>> list = new ArrayList<>();
-    for (Beacon beacon : beacons) {
-      Map<String, Object> map = beaconToMap(beacon);
-      list.add(map);
+    static String parseState(int state) {
+        return state == MonitorNotifier.INSIDE ? "INSIDE" : state == MonitorNotifier.OUTSIDE ? "OUTSIDE" : "UNKNOWN";
     }
 
-    return list;
-  }
+    static List<Map<String, Object>> beaconsToArray(List<Beacon> beacons) {
+        if (beacons == null) {
+            return new ArrayList<>();
+        }
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Beacon beacon : beacons) {
+            Map<String, Object> map = beaconToMap(beacon);
+            list.add(map);
+        }
 
-  private static Map<String, Object> beaconToMap(Beacon beacon) {
-    Map<String, Object> map = new HashMap<>();
-
-    map.put("proximityUUID", beacon.getId1().toString().toUpperCase());
-    map.put("major", beacon.getId2().toInt());
-    map.put("minor", beacon.getId3().toInt());
-    map.put("rssi", beacon.getRssi());
-    map.put("txPower", beacon.getTxPower());
-    map.put("accuracy", String.format(Locale.US, "%.2f", beacon.getDistance()));
-    map.put("macAddress", beacon.getBluetoothAddress());
-
-    return map;
-  }
-
-  static Map<String, Object> regionToMap(Region region) {
-    Map<String, Object> map = new HashMap<>();
-
-    map.put("identifier", region.getUniqueId());
-    if (region.getId1() != null) {
-      map.put("proximityUUID", region.getId1().toString());
-    }
-    if (region.getId2() != null) {
-      map.put("major", region.getId2().toInt());
-    }
-    if (region.getId3() != null) {
-      map.put("minor", region.getId3().toInt());
+        return list;
     }
 
-    return map;
-  }
+    private static Map<String, Object> beaconToMap(Beacon beacon) {
+        Map<String, Object> map = new HashMap<>();
 
-  @SuppressWarnings("rawtypes")
-  static Region regionFromMap(Map map) {
-    try {
-      String identifier = "";
-      List<Identifier> identifiers = new ArrayList<>();
+//    if(beacon.getParserIdentifier() == BeaconParser.EDDYSTONE_TLM_LAYOUT){
+//      map.put("proximityUUID", beacon.getId1().toString().toUpperCase());
+//        map.put("ID2?", beacon.getId2().toString());
+//        map.put("ID3?", beacon.getId3().toString());
+//        map.put("rssi", beacon.getRssi());
+//        map.put("txPower", beacon.getTxPower());//?
+//        map.put("accuracy", String.format(Locale.US, "%.2f", beacon.getDistance()));
+//      map.put("macAddress", beacon.getBluetoothAddress());
+//    } else if(beacon.getParserIdentifier() == BeaconParser.EDDYSTONE_UID_LAYOUT){
+//      map.put("proximityUUID", beacon.getId1().toString().toUpperCase());
+//        map.put("instanceID", beacon.getId2().toString().toUpperCase());
+//        map.put("ID3?", beacon.getId3().toString());
+//        map.put("rssi", beacon.getRssi());
+//        map.put("txPower", beacon.getTxPower());
+//        map.put("accuracy", String.format(Locale.US, "%.2f", beacon.getDistance()));
+//      map.put("macAddress", beacon.getBluetoothAddress());
+//    }else if(beacon.getParserIdentifier() == BeaconParser.EDDYSTONE_URL_LAYOUT){
+//      map.put("proximityUUID", beacon.getId1().toString().toUpperCase());
+//        map.put("URL?", beacon.getId2().toString());
+//        map.put("ID3?", beacon.getId3().toString());
+//        map.put("rssi", beacon.getRssi());
+//        map.put("txPower", beacon.getTxPower());
+//        map.put("accuracy", String.format(Locale.US, "%.2f", beacon.getDistance()));
+//      map.put("macAddress", beacon.getBluetoothAddress());
+//    }
+//    else {
+        map.put("proximityUUID", beacon.getId1().toString().toUpperCase());
+        //map.put("major", beacon.getId2().toInt());
+        //map.put("minor", beacon.getId3().toInt());
+        map.put("rssi", beacon.getRssi());
+        map.put("txPower", beacon.getTxPower());
+        map.put("accuracy", String.format(Locale.US, "%.2f", beacon.getDistance()));
+        map.put("macAddress", beacon.getBluetoothAddress());
+        map.put("bleName", beacon.getBluetoothName());//add
+        //map.put("id3", beacon.getId3());
+        map.put("identifier", beacon.getParserIdentifier());
+//        }
 
-      Object objectIdentifier = map.get("identifier");
-      if (objectIdentifier instanceof String) {
-        identifier = objectIdentifier.toString();
-      }
-
-      Object proximityUUID = map.get("proximityUUID");
-
-      if (proximityUUID instanceof String) {
-        identifiers.add(Identifier.parse((String) proximityUUID));
-      }
-
-      Object major = map.get("major");
-      if (major instanceof Integer) {
-        identifiers.add(Identifier.fromInt((Integer) major));
-      }
-      Object minor = map.get("minor");
-      if (minor instanceof Integer) {
-        identifiers.add(Identifier.fromInt((Integer) minor));
-      }
-
-      return new Region(identifier, identifiers);
-    } catch (IllegalArgumentException e) {
-      Log.e("REGION", "Error : " + e);
-      return null;
-    }
-  }
-
-  @SuppressWarnings("rawtypes")
-  static Beacon beaconFromMap(Map map) {
-    Beacon.Builder builder = new Beacon.Builder();
-
-    Object proximityUUID = map.get("proximityUUID");
-    if (proximityUUID instanceof String) {
-      builder.setId1((String) proximityUUID);
-    }
-    Object major = map.get("major");
-    if (major instanceof Integer) {
-      builder.setId2(major.toString());
-    }
-    Object minor = map.get("minor");
-    if (minor instanceof Integer) {
-      builder.setId3(minor.toString());
+        return map;
     }
 
-    Object txPower = map.get("txPower");
-    if (txPower instanceof Integer) {
-      builder.setTxPower((Integer) txPower);
-    } else {
-      builder.setTxPower(-59);
+    static Map<String, Object> regionToMap(Region region) {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("identifier", region.getUniqueId());
+        if (region.getId1() != null) {
+            map.put("proximityUUID", region.getId1().toString());
+        }
+        if (region.getId2() != null) {
+            map.put("major", region.getId2().toInt());
+        }
+        if (region.getId3() != null) {
+            map.put("minor", region.getId3().toInt());
+        }
+
+        return map;
     }
 
-    builder.setDataFields(Collections.singletonList(0L));
-    builder.setManufacturer(0x004c);
+    @SuppressWarnings("rawtypes")
+    static Region regionFromMap(Map map) {
+        try {
+            String identifier = "";
+            List<Identifier> identifiers = new ArrayList<>();
 
-    return builder.build();
-  }
+            Object objectIdentifier = map.get("identifier");
+            if (objectIdentifier instanceof String) {
+                identifier = objectIdentifier.toString();
+            }
+
+            Object proximityUUID = map.get("proximityUUID");
+
+            if (proximityUUID instanceof String) {
+                identifiers.add(Identifier.parse((String) proximityUUID));
+            }
+
+            Object major = map.get("major");
+            if (major instanceof Integer) {
+                identifiers.add(Identifier.fromInt((Integer) major));
+            }
+            Object minor = map.get("minor");
+            if (minor instanceof Integer) {
+                identifiers.add(Identifier.fromInt((Integer) minor));
+            }
+
+            return new Region(identifier, identifiers);
+        } catch (IllegalArgumentException e) {
+            Log.e("REGION", "Error : " + e);
+            return null;
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    static Beacon beaconFromMap(Map map) {
+        Beacon.Builder builder = new Beacon.Builder();
+
+        Object proximityUUID = map.get("proximityUUID");
+        if (proximityUUID instanceof String) {
+            builder.setId1((String) proximityUUID);
+        }
+        Object major = map.get("major");
+        if (major instanceof Integer) {
+            builder.setId2(major.toString());
+        }
+        Object minor = map.get("minor");
+        if (minor instanceof Integer) {
+            builder.setId3(minor.toString());
+        }
+
+        Object txPower = map.get("txPower");
+        if (txPower instanceof Integer) {
+            builder.setTxPower((Integer) txPower);
+        } else {
+            builder.setTxPower(-59);
+        }
+
+        builder.setDataFields(Collections.singletonList(0L));
+        builder.setManufacturer(0x004c);
+
+        return builder.build();
+    }
 }
