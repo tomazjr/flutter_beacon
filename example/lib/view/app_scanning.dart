@@ -65,6 +65,17 @@ class _TabScanningState extends State<TabScanning> {
       if (result != null && mounted) {
         setState(() {
           _regionBeacons[result.region] = result.beacons;
+          // if (_beacons.isNotEmpty) {
+          //   if (_beacons.length == result.beacons.length) {
+          //     for (int i = 0; i <= result.beacons.length; i++) {
+          //       if (result.beacons[i].macAddress != _beacons[i].macAddress)
+          //         _beacons.clear();
+          //       break;
+          //     }
+          //   } else
+          //     _beacons.clear();
+          // }
+          //  else
           _beacons.clear();
           _regionBeacons.values.forEach((list) {
             _beacons.addAll(list);
@@ -112,7 +123,7 @@ class _TabScanningState extends State<TabScanning> {
           : ListView(
               children: ListTile.divideTiles(
                 context: context,
-                color: Colors.white,
+                color: Colors.grey,
                 tiles: _beacons.map(
                   (beacon) {
                     return Column(

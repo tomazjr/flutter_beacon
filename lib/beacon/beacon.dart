@@ -10,7 +10,7 @@ enum Proximity { unknown, immediate, near, far }
 /// Class for managing Beacon object.
 class Beacon {
   /// The proximity UUID of beacon.
-  final String proximityUUID;
+  final String? proximityUUID;
 
   /// The mac address of beacon.
   ///
@@ -18,12 +18,12 @@ class Beacon {
   final String? macAddress;
 
   /// The major value of beacon.
-  final int major;
+  final int? major;
 
   /// The minor value of beacon.
-  final int minor;
+  final int? minor;
 
-  /// The rssi value of beacon.
+  /// The rssi value of beacon in dBm.
   final int rssi;
 
   /// The transmission power of beacon.
@@ -37,16 +37,56 @@ class Beacon {
   /// The proximity of beacon.
   final Proximity? _proximity;
 
+  /// Identifier namespaceID of UID
+  final String? namespaceId;
+
+  /// Identifier instanceId of UID
+  final String? instanceId;
+
+  /// ExtraDataFields telemetryVersion
+  final int? telemetryVersion;
+
+  /// ExtraDataFields battery level batteryMilliVolts in mV
+  final int? batteryMilliVolts;
+
+  /// ExtraDataFields pduCount advertisements
+  final int? pduCount;
+
+  /// ExtraDataFields uptime
+  final int? uptime;
+
+  /// ExtraDataFields temperature in °C
+  final int? temperature;
+
+  /// Identifier url of URL
+  final String? url;
+
+  /// BeaconTypeCode
+  final String? beaconTypeCode;
+
+  /// BluetoothName
+  final String? bleName;
+
   /// Create beacon object.
   const Beacon({
-    required this.proximityUUID,
+    /* required */ this.proximityUUID,
     this.macAddress,
-    required this.major,
-    required this.minor,
+    /* required */ this.major,
+    /* required */ this.minor,
     int? rssi,
     this.txPower,
     required this.accuracy,
     Proximity? proximity,
+    this.namespaceId,
+    this.instanceId,
+    this.telemetryVersion,
+    this.batteryMilliVolts,
+    this.pduCount,
+    this.uptime,
+    this.temperature,
+    this.url,
+    this.beaconTypeCode,
+    this.bleName,
   })  : this.rssi = rssi ?? -1,
         this._proximity = proximity;
 
@@ -61,6 +101,16 @@ class Beacon {
           txPower: _parseInt(json['txPower']),
           accuracy: _parseDouble(json['accuracy']),
           proximity: _parseProximity(json['proximity']),
+          namespaceId: json['namespaceId'],
+          instanceId: json['instanceId'],
+          telemetryVersion: json['telemetryVersion'],
+          batteryMilliVolts: json['batteryMilliVolts'],
+          pduCount: json['pduCount'],
+          uptime: json['uptime'],
+          temperature: json['temperature'],
+          url: json['url'],
+          beaconTypeCode: json['beaconTypeCode'],
+          bleName: json['bleName'],
         );
 
   /// Parsing dynamic data into double.
@@ -127,13 +177,23 @@ class Beacon {
   /// Serialize current instance object into [Map].
   dynamic get toJson {
     final map = <String, dynamic>{
-      'proximityUUID': proximityUUID,
-      'major': major,
-      'minor': minor,
+      //'proximityUUID': proximityUUID,
+      //'major': major,
+      //'minor': minor,
       'rssi': rssi,
       'accuracy': accuracy,
       'proximity': proximity.toString().split('.').last
     };
+
+    if (proximityUUID != null) {
+      map['proximityUUID'] = proximityUUID;
+    }
+    if (major != null) {
+      map['major'] = major;
+    }
+    if (minor != null) {
+      map['minor'] = minor;
+    }
 
     if (txPower != null) {
       map['txPower'] = txPower;
@@ -141,6 +201,37 @@ class Beacon {
 
     if (macAddress != null) {
       map['macAddress'] = macAddress;
+    }
+
+    if (namespaceId != null) {
+      map['namespaceId'] = namespaceId;
+    }
+    if (instanceId != null) {
+      map['instanceId'] = instanceId;
+    }
+    if (telemetryVersion != null) {
+      map['telemetryVersion'] = telemetryVersion;
+    }
+    if (batteryMilliVolts != null) {
+      map['batteryMilliVolts'] = batteryMilliVolts;
+    }
+    if (pduCount != null) {
+      map['pduCount'] = pduCount;
+    }
+    if (uptime != null) {
+      map['uptime'] = uptime;
+    }
+    if (temperature != null) {
+      map['temperature'] = temperature;
+    }
+    if (url != null) {
+      map['url'] = url;
+    }
+    if (beaconTypeCode != null) {
+      map['beaconTypeCode'] = beaconTypeCode;
+    }
+    if (bleName != null) {
+      map['bleName'] = bleName;
     }
 
     return map;

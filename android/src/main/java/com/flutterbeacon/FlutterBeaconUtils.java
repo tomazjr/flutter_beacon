@@ -7,6 +7,7 @@ import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.MonitorNotifier;
 import org.altbeacon.beacon.Region;
+import org.altbeacon.beacon.utils.UrlBeaconUrlCompressor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,43 +37,85 @@ class FlutterBeaconUtils {
     private static Map<String, Object> beaconToMap(Beacon beacon) {
         Map<String, Object> map = new HashMap<>();
 
-//    if(beacon.getParserIdentifier() == BeaconParser.EDDYSTONE_TLM_LAYOUT){
-//      map.put("proximityUUID", beacon.getId1().toString().toUpperCase());
-//        map.put("ID2?", beacon.getId2().toString());
-//        map.put("ID3?", beacon.getId3().toString());
-//        map.put("rssi", beacon.getRssi());
-//        map.put("txPower", beacon.getTxPower());//?
-//        map.put("accuracy", String.format(Locale.US, "%.2f", beacon.getDistance()));
-//      map.put("macAddress", beacon.getBluetoothAddress());
-//    } else if(beacon.getParserIdentifier() == BeaconParser.EDDYSTONE_UID_LAYOUT){
-//      map.put("proximityUUID", beacon.getId1().toString().toUpperCase());
-//        map.put("instanceID", beacon.getId2().toString().toUpperCase());
-//        map.put("ID3?", beacon.getId3().toString());
-//        map.put("rssi", beacon.getRssi());
-//        map.put("txPower", beacon.getTxPower());
-//        map.put("accuracy", String.format(Locale.US, "%.2f", beacon.getDistance()));
-//      map.put("macAddress", beacon.getBluetoothAddress());
-//    }else if(beacon.getParserIdentifier() == BeaconParser.EDDYSTONE_URL_LAYOUT){
-//      map.put("proximityUUID", beacon.getId1().toString().toUpperCase());
-//        map.put("URL?", beacon.getId2().toString());
-//        map.put("ID3?", beacon.getId3().toString());
-//        map.put("rssi", beacon.getRssi());
-//        map.put("txPower", beacon.getTxPower());
-//        map.put("accuracy", String.format(Locale.US, "%.2f", beacon.getDistance()));
-//      map.put("macAddress", beacon.getBluetoothAddress());
-//    }
-//    else {
+        // if is a Eddystone-UID frame
+        if (beacon.getServiceUuid() == 0xfeaa && beacon.getBeaconTypeCode() == 0x00) {
+            // This is a Eddystone-UID frame
+            map.put("namespaceId", beacon.getId1().toString().toUpperCase());
+            map.put("instanceId", beacon.getId2().toString().toUpperCase());
+            map.put("rssi", beacon.getRssi());
+            map.put("txPower", beacon.getTxPower());
+            map.put("accuracy", String.format(Locale.US, "%.2f", beacon.getDistance()));
+            map.put("macAddress", beacon.getBluetoothAddress());
+            map.put("bleName", beacon.getBluetoothName());
+            map.put("beaconTypeCode", beacon.getBeaconTypeCode());
+
+            // Do we have telemetry data?
+            if (beacon.getExtraDataFields().size() > 0) {
+                map.put("telemetryVersion", beacon.getExtraDataFields().get(0));
+                //long telemetryVersion = beacon.getExtraDataFields().get(0);
+                map.put("batteryMilliVolts", beacon.getExtraDataFields().get(1));
+                //long batteryMilliVolts = beacon.getExtraDataFields().get(1);
+                map.put("pduCount", beacon.getExtraDataFields().get(3));
+                //long pduCount = beacon.getExtraDataFields().get(3);
+                map.put("uptime", beacon.getExtraDataFields().get(4));
+                //long uptime = beacon.getExtraDataFields().get(4);
+                map.put("temperature", beacon.getExtraDataFields().get(2));
+            }
+        }
+        else
+        // if is a Eddystone-URL frame
+        if (beacon.getServiceUuid() == 0xfeaa && beacon.getBeaconTypeCode() == 0x10) {
+            // This is a Eddystone-URL frame
+            map.put("url", UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray()));
+            map.put("rssi", beacon.getRssi());
+            map.put("txPower", beacon.getTxPower());
+            map.put("accuracy", String.format(Locale.US, "%.2f", beacon.getDistance()));
+            map.put("macAddress", beacon.getBluetoothAddress());
+            map.put("bleName", beacon.getBluetoothName());
+            map.put("beaconTypeCode", beacon.getBeaconTypeCode());
+
+            // Do we have telemetry data?
+            if (beacon.getExtraDataFields().size() > 0) {
+                map.put("telemetryVersion", beacon.getExtraDataFields().get(0));
+                //long telemetryVersion = beacon.getExtraDataFields().get(0);
+                map.put("batteryMilliVolts", beacon.getExtraDataFields().get(1));
+                //long batteryMilliVolts = beacon.getExtraDataFields().get(1);
+                map.put("pduCount", beacon.getExtraDataFields().get(3));
+                //long pduCount = beacon.getExtraDataFields().get(3);
+                map.put("uptime", beacon.getExtraDataFields().get(4));
+                //long uptime = beacon.getExtraDataFields().get(4);
+                map.put("temperature", beacon.getExtraDataFields().get(2));
+            }
+        }
+        else
+        // if is a Eddystone-TLM frame
+        if (beacon.getServiceUuid() == 0xfeaa && beacon.getBeaconTypeCode() == 0x20) {
+            // This is a Eddystone-TLM frame
+            // Do we have telemetry data?
+            //if (beacon.getExtraDataFields().size() > 0) {
+                map.put("telemetryVersion", beacon.getExtraDataFields().get(0));
+                //long telemetryVersion = beacon.getExtraDataFields().get(0);
+                map.put("batteryMilliVolts", beacon.getExtraDataFields().get(1));
+                //long batteryMilliVolts = beacon.getExtraDataFields().get(1);
+                map.put("pduCount", beacon.getExtraDataFields().get(3));
+                //long pduCount = beacon.getExtraDataFields().get(3);
+                map.put("uptime", beacon.getExtraDataFields().get(4));
+                //long uptime = beacon.getExtraDataFields().get(4);
+                map.put("temperature", beacon.getExtraDataFields().get(2));
+            //}
+        }
+        else
+        {
         map.put("proximityUUID", beacon.getId1().toString().toUpperCase());
-        //map.put("major", beacon.getId2().toInt());
-        //map.put("minor", beacon.getId3().toInt());
+        map.put("major", beacon.getId2().toInt());
+        map.put("minor", beacon.getId3().toInt());
         map.put("rssi", beacon.getRssi());
         map.put("txPower", beacon.getTxPower());
         map.put("accuracy", String.format(Locale.US, "%.2f", beacon.getDistance()));
         map.put("macAddress", beacon.getBluetoothAddress());
-        map.put("bleName", beacon.getBluetoothName());//add
-        //map.put("id3", beacon.getId3());
-        map.put("identifier", beacon.getParserIdentifier());
-//        }
+        map.put("bleName", beacon.getBluetoothName());
+        //map.put("identifier", beacon.getParserIdentifier());
+        }
 
         return map;
     }
