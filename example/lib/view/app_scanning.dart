@@ -80,7 +80,7 @@ class _TabScanningState extends State<TabScanning> {
           _regionBeacons.values.forEach((list) {
             _beacons.addAll(list);
           });
-          _beacons.sort(_compareParameters);
+          //_beacons.sort(_compareParameters);
         });
       }
     });
@@ -126,53 +126,199 @@ class _TabScanningState extends State<TabScanning> {
                 color: Colors.grey,
                 tiles: _beacons.map(
                   (beacon) {
-                    return Column(
-                      children: [
-                        Text(
-                          beacon.macAddress,
-                          style: TextStyle(fontSize: 15.0),
-                        ),
-                        ListTile(
-                          // leading: Text(
-                          //   beacon.macAddress,
-                          //   style: TextStyle(fontSize: 15.0),
-                          // ),
-                          title: Text(
-                            beacon.proximityUUID,
+                    if (beacon.beaconTypeCode.toString() == '0') //'0x00' = '0'
+                      return Column(
+                        children: [
+                          Text(
+                            'This is a Eddystone_UID frame',
                             style: TextStyle(fontSize: 15.0),
                           ),
-                          subtitle: new Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: <Widget>[
-                              Flexible(
-                                child: Text(
-                                  'Major: ${beacon.major}\nMinor: ${beacon.minor}',
-                                  style: TextStyle(fontSize: 13.0),
-                                ),
-                                flex: 1,
-                                fit: FlexFit.tight,
-                              ),
-                              Flexible(
-                                child: Text(
-                                  'Accuracy: ${beacon.accuracy}m\nRSSI: ${beacon.rssi}',
-                                  style: TextStyle(fontSize: 13.0),
-                                ),
-                                flex: 2,
-                                fit: FlexFit.tight,
-                              )
-                            ],
+                          Text(
+                            beacon.macAddress,
+                            style: TextStyle(fontSize: 15.0),
                           ),
-                          // trailing: Text(beacon.proximity.toString(),
-                          //     style: TextStyle(fontSize: 15.0)),
-                        ),
-                        Text(
-                          'Tx Power: ${beacon.txPower}',
-                          style: TextStyle(fontSize: 13.0),
-                        ),
-                        Text('Proximity: ${beacon.proximity.toString()}',
-                            style: TextStyle(fontSize: 13.0)),
-                      ],
-                    );
+                          Text(
+                            beacon.namespaceId,
+                            style: TextStyle(fontSize: 15.0),
+                          ),
+                          ListTile(
+                            title: Text(
+                              beacon.instanceId,
+                              style: TextStyle(fontSize: 15.0),
+                            ),
+                            subtitle: new Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                Flexible(
+                                  child: Text(
+                                    'Accuracy: ${beacon.accuracy} m\nRSSI: ${beacon.rssi} dBm',
+                                    style: TextStyle(fontSize: 13.0),
+                                  ),
+                                  flex: 2,
+                                  fit: FlexFit.tight,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            'Tx Power: ${beacon.txPower}',
+                            style: TextStyle(fontSize: 13.0),
+                          ),
+                          Text(
+                            'Proximity: ${beacon.proximity.toString()}',
+                            style: TextStyle(fontSize: 13.0),
+                          ),
+                          beacon.telemetryVersion != null
+                              ? Text(
+                                  'telemetryVersion: ${beacon.telemetryVersion}',
+                                  style: TextStyle(fontSize: 13.0),
+                                )
+                              : Container(), //null,
+                          beacon.batteryMilliVolts != null
+                              ? Text(
+                                  'batteryLevel: ${beacon.batteryMilliVolts} mV',
+                                  style: TextStyle(fontSize: 13.0),
+                                )
+                              : Container(), //null,
+                          beacon.pduCount != null
+                              ? Text(
+                                  'pduCount: ${beacon.pduCount} advertisements',
+                                  style: TextStyle(fontSize: 13.0),
+                                )
+                              : Container(), //null,
+                          beacon.uptime != null
+                              ? Text(
+                                  'uptime: ${beacon.uptime} seconds',
+                                  style: TextStyle(fontSize: 13.0),
+                                )
+                              : Container(), //null,
+                          beacon.temperature != null
+                              ? Text(
+                                  'temperature: ${beacon.temperature} °C',
+                                  style: TextStyle(fontSize: 13.0),
+                                )
+                              : Container(), //null,
+                        ],
+                      );
+                    else if (beacon.beaconTypeCode.toString() ==
+                        '16') //'0x10' = '16'
+                      return Column(
+                        children: [
+                          Text(
+                            'This is a Eddystone_URL frame',
+                            style: TextStyle(fontSize: 15.0),
+                          ),
+                          Text(
+                            beacon.macAddress,
+                            style: TextStyle(fontSize: 15.0),
+                          ),
+                          ListTile(
+                            title: Text(
+                              beacon.url,
+                              style: TextStyle(fontSize: 15.0),
+                            ),
+                            subtitle: new Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                Flexible(
+                                  child: Text(
+                                    'Accuracy: ${beacon.accuracy} m\nRSSI: ${beacon.rssi} dBm',
+                                    style: TextStyle(fontSize: 13.0),
+                                  ),
+                                  flex: 2,
+                                  fit: FlexFit.tight,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            'Tx Power: ${beacon.txPower}',
+                            style: TextStyle(fontSize: 13.0),
+                          ),
+                          Text(
+                            'Proximity: ${beacon.proximity.toString()}',
+                            style: TextStyle(fontSize: 13.0),
+                          ),
+                          beacon.telemetryVersion != null
+                              ? Text(
+                                  'telemetryVersion: ${beacon.telemetryVersion}',
+                                  style: TextStyle(fontSize: 13.0),
+                                )
+                              : Container(), //null,
+                          beacon.batteryMilliVolts != null
+                              ? Text(
+                                  'batteryLevel: ${beacon.batteryMilliVolts} mV',
+                                  style: TextStyle(fontSize: 13.0),
+                                )
+                              : Container(), //null,
+                          beacon.pduCount != null
+                              ? Text(
+                                  'pduCount: ${beacon.pduCount} advertisements',
+                                  style: TextStyle(fontSize: 13.0),
+                                )
+                              : Container(), //null,
+                          beacon.uptime != null
+                              ? Text(
+                                  'uptime: ${beacon.uptime} seconds',
+                                  style: TextStyle(fontSize: 13.0),
+                                )
+                              : Container(), //null,
+                          beacon.temperature != null
+                              ? Text(
+                                  'temperature: ${beacon.temperature} °C',
+                                  style: TextStyle(fontSize: 13.0),
+                                )
+                              : Container(), //null,
+                        ],
+                      );
+                    // else if (beacon.beaconTypeCode.toString() ==
+                    //   '16') //'0x20' = '32' This is a Eddystone_TLM frame
+                    else
+                      return Column(
+                        children: [
+                          Text(
+                            'This is a iBeacon frame',
+                            style: TextStyle(fontSize: 15.0),
+                          ),
+                          Text(
+                            beacon.macAddress,
+                            style: TextStyle(fontSize: 15.0),
+                          ),
+                          ListTile(
+                            title: Text(
+                              beacon.proximityUUID,
+                              style: TextStyle(fontSize: 15.0),
+                            ),
+                            subtitle: new Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                Flexible(
+                                  child: Text(
+                                    'Major: ${beacon.major}\nMinor: ${beacon.minor}',
+                                    style: TextStyle(fontSize: 13.0),
+                                  ),
+                                  flex: 1,
+                                  fit: FlexFit.tight,
+                                ),
+                                Flexible(
+                                  child: Text(
+                                    'Accuracy: ${beacon.accuracy} m\nRSSI: ${beacon.rssi} dBm',
+                                    style: TextStyle(fontSize: 13.0),
+                                  ),
+                                  flex: 2,
+                                  fit: FlexFit.tight,
+                                )
+                              ],
+                            ),
+                          ),
+                          Text(
+                            'Tx Power: ${beacon.txPower}',
+                            style: TextStyle(fontSize: 13.0),
+                          ),
+                          Text('Proximity: ${beacon.proximity.toString()}',
+                              style: TextStyle(fontSize: 13.0)),
+                        ],
+                      );
                   },
                 ),
               ).toList(),
