@@ -52,7 +52,7 @@ class Beacon {
   /// ExtraDataFields pduCount advertisements
   final int? pduCount;
 
-  /// ExtraDataFields uptime
+  /// ExtraDataFields uptime in seconds
   final int? uptime;
 
   /// ExtraDataFields temperature in °C
@@ -62,7 +62,7 @@ class Beacon {
   final String? url;
 
   /// BeaconTypeCode
-  final String? beaconTypeCode;
+  final int? beaconTypeCode;
 
   /// BluetoothName
   final String? bleName;
@@ -109,7 +109,7 @@ class Beacon {
           uptime: json['uptime'],
           temperature: json['temperature'],
           url: json['url'],
-          beaconTypeCode: json['beaconTypeCode'],
+          beaconTypeCode: _parseInt(json['beaconTypeCode']),
           bleName: json['bleName'],
         );
 
