@@ -38,6 +38,9 @@ public class FlutterBeaconPlugin implements FlutterPlugin, ActivityAware, Method
     private static final BeaconParser urlBeaconLayout = new BeaconParser()
             .setBeaconLayout(BeaconParser.EDDYSTONE_URL_LAYOUT);
 
+    private static final BeaconParser eidBeaconLayout = new BeaconParser()
+            .setBeaconLayout("s:0-1=feaa,m:2-2=30,p:3-3:-41,i:4-11");//BeaconParser.EDDYSTONE_EID_LAYOUT);
+
     static final int REQUEST_CODE_LOCATION = 1234;
     static final int REQUEST_CODE_BLUETOOTH = 5678;
 

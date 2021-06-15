@@ -271,8 +271,61 @@ class _TabScanningState extends State<TabScanning> {
                               : Container(), //null,
                         ],
                       );
-                    // else if (beacon.beaconTypeCode.toString() ==
-                    //   '16') //'0x20' = '32' This is a Eddystone_TLM frame
+                    else if (beacon.beaconTypeCode.toString() ==
+                        '32') //'0x20' = '32' This is a Eddystone_TLM frame
+                      return Column(
+                        children: [
+                          Text(
+                            'This is a Eddystone_TLM frame',
+                            style: TextStyle(fontSize: 15.0),
+                          ),
+                          // Text(
+                          //   beacon.macAddress,
+                          //   style: TextStyle(fontSize: 15.0),
+                          // ),
+                        ],
+                      );
+                    else if (beacon.beaconTypeCode.toString() ==
+                        '48') //'0x30' = '48' This is a Eddystone_EID frame
+                      return Column(
+                        children: [
+                          Text(
+                            'This is a Eddystone_EID frame',
+                            style: TextStyle(fontSize: 15.0),
+                          ),
+                          Text(
+                            beacon.macAddress,
+                            style: TextStyle(fontSize: 15.0),
+                          ),
+                          ListTile(
+                            title: Text(
+                              beacon.ephemeralId,
+                              style: TextStyle(fontSize: 15.0),
+                            ),
+                            subtitle: new Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                Flexible(
+                                  child: Text(
+                                    'Accuracy: ${beacon.accuracy} m\nRSSI: ${beacon.rssi} dBm',
+                                    style: TextStyle(fontSize: 13.0),
+                                  ),
+                                  flex: 2,
+                                  fit: FlexFit.tight,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            'Tx Power: ${beacon.txPower}',
+                            style: TextStyle(fontSize: 13.0),
+                          ),
+                          Text(
+                            'Proximity: ${beacon.proximity.toString()}',
+                            style: TextStyle(fontSize: 13.0),
+                          ),
+                        ],
+                      );
                     else
                       return Column(
                         children: [

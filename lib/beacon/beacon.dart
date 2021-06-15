@@ -67,6 +67,9 @@ class Beacon {
   /// BluetoothName
   final String? bleName;
 
+  /// Identifier ephemeralId of EID
+  final String? ephemeralId;
+
   /// Create beacon object.
   const Beacon({
     /* required */ this.proximityUUID,
@@ -87,6 +90,7 @@ class Beacon {
     this.url,
     this.beaconTypeCode,
     this.bleName,
+    this.ephemeralId,
   })  : this.rssi = rssi ?? -1,
         this._proximity = proximity;
 
@@ -111,6 +115,7 @@ class Beacon {
           url: json['url'],
           beaconTypeCode: _parseInt(json['beaconTypeCode']),
           bleName: json['bleName'],
+          ephemeralId: json['ephemeralId'],
         );
 
   /// Parsing dynamic data into double.
@@ -232,6 +237,9 @@ class Beacon {
     }
     if (bleName != null) {
       map['bleName'] = bleName;
+    }
+    if (ephemeralId != null) {
+      map['ephemeralId'] = ephemeralId;
     }
 
     return map;

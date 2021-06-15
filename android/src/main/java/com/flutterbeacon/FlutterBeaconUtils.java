@@ -105,6 +105,18 @@ class FlutterBeaconUtils {
             //}
         }
         else
+            // if is a Eddystone-EID frame
+            if (beacon.getServiceUuid() == 0xfeaa && beacon.getBeaconTypeCode() == 0x30) {
+                // This is a Eddystone-EID frame
+                map.put("ephemeralId", beacon.getId1().toString().toUpperCase());
+                map.put("rssi", beacon.getRssi());
+                map.put("txPower", beacon.getTxPower());
+                map.put("accuracy", String.format(Locale.US, "%.2f", beacon.getDistance()));
+                map.put("macAddress", beacon.getBluetoothAddress());
+                map.put("bleName", beacon.getBluetoothName());
+                map.put("beaconTypeCode", beacon.getBeaconTypeCode());
+            }
+        else
         {
         map.put("proximityUUID", beacon.getId1().toString().toUpperCase());
         map.put("major", beacon.getId2().toInt());
