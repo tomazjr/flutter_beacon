@@ -126,7 +126,8 @@ class _TabScanningState extends State<TabScanning> {
                 color: Colors.grey,
                 tiles: _beacons.map(
                   (beacon) {
-                    if (beacon.beaconTypeCode.toString() == '0') //'0x00' = '0'
+                    if (beacon.beaconTypeCode.toString() ==
+                        '0') //'0x00' = '0' This is a Eddystone_UID frame
                       return Column(
                         children: [
                           Text(
@@ -201,7 +202,7 @@ class _TabScanningState extends State<TabScanning> {
                         ],
                       );
                     else if (beacon.beaconTypeCode.toString() ==
-                        '16') //'0x10' = '16'
+                        '16') //'0x10' = '16' This is a Eddystone_URL frame
                       return Column(
                         children: [
                           Text(

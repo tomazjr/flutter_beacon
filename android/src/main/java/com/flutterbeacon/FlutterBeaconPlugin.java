@@ -117,7 +117,7 @@ public class FlutterBeaconPlugin implements FlutterPlugin, ActivityAware, Method
 
         beaconManager = BeaconManager.getInstanceForApplication(activity.getApplicationContext());
         if (!beaconManager.getBeaconParsers().contains(iBeaconLayout)) {
-            beaconManager.getBeaconParsers().clear();
+            //beaconManager.getBeaconParsers().clear();
             beaconManager.getBeaconParsers().add(iBeaconLayout);
         }
 
@@ -135,6 +135,12 @@ public class FlutterBeaconPlugin implements FlutterPlugin, ActivityAware, Method
         if (!beaconManager.getBeaconParsers().contains(urlBeaconLayout)) {
             //beaconManager.getBeaconParsers().clear();
             beaconManager.getBeaconParsers().add(urlBeaconLayout);
+        }
+
+        // Detect the EID frame:
+        if (!beaconManager.getBeaconParsers().contains(eidBeaconLayout)) {
+            //beaconManager.getBeaconParsers().clear();
+            beaconManager.getBeaconParsers().add(eidBeaconLayout);
         }
 
         platform = new FlutterPlatform(activity);
