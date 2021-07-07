@@ -109,7 +109,7 @@ class Beacon {
           instanceId: json['instanceId'],
           telemetryVersion: json['telemetryVersion'],
           batteryMilliVolts: json['batteryMilliVolts'],
-          pduCount: json['pduCount'],
+          pduCount: _parseInt(json['pduCount']),
           uptime: json['uptime'],
           temperature: json['temperature'],
           url: json['url'],
